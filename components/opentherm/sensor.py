@@ -8,13 +8,12 @@ DEPENDENCIES = [const.OPENTHERM]
 COMPONENT_TYPE = const.SENSOR
 
 def get_entity_validation_schema(entity: schema.SensorSchema) -> cv.Schema:
-    """Return the sensor schema with defaults for optional fields."""
     return sensor.sensor_schema(
-        unit_of_measurement=entity.get("unit_of_measurement", ""),
-        accuracy_decimals=entity.get("accuracy_decimals", 1),
-        device_class=entity.get("device_class", "none"),
-        icon=entity.get("icon", ""),
-        state_class=entity.get("state_class", "measurement")
+        unit_of_measurement=entity.get("unit_of_measurement", None),
+        accuracy_decimals=entity.get("accuracy_decimals", None),
+        device_class=entity.get("device_class", None),
+        icon=entity.get("icon", None),
+        state_class=entity.get("state_class", None)
     )
 
 CONFIG_SCHEMA = validate.create_component_schema(
