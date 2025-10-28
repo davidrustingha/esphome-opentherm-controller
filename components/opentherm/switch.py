@@ -10,12 +10,14 @@ from . import const, schema, validate, generate
 DEPENDENCIES = [const.OPENTHERM]
 COMPONENT_TYPE = const.SWITCH
 
+# Define your switch class
 OpenthermSwitch = generate.opentherm_ns.class_(
     "OpenthermSwitch", switch.Switch, cg.Component
 )
 
 CONF_MODE = "mode"
 
+# Function to create the switch object in code
 async def new_openthermswitch(config: Dict[str, Any]) -> cg.Pvariable:
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
@@ -23,8 +25,9 @@ async def new_openthermswitch(config: Dict[str, Any]) -> cg.Pvariable:
     cg.add(getattr(var, "set_mode")(config[CONF_MODE]))
     return var
 
+# Validation schema for each switch entity
 def get_entity_validation_schema(entity: schema.SwitchSchema) -> cv.Schema:
-    return switch.switch_schema().extend({
+    return switch.switch_schema(class_=OpenthermSwitch).extend({
         cv.GenerateID(): cv.declare_id(OpenthermSwitch),
         cv.Optional(CONF_MODE, entity["default_mode"]): cv.enum({
             "restore_default_on": cg.RawExpression(
@@ -42,10 +45,12 @@ def get_entity_validation_schema(entity: schema.SwitchSchema) -> cv.Schema:
         })
     }).extend(cv.COMPONENT_SCHEMA)
 
+# Create the full component schema
 CONFIG_SCHEMA = validate.create_component_schema(
     schema.SWITCHES, get_entity_validation_schema
 )
 
+# Convert configuration to code
 async def to_code(config: Dict[str, Any]) -> None:
     keys = await generate.component_to_code(
         COMPONENT_TYPE,
